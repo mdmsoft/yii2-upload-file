@@ -48,4 +48,15 @@ class FileModel extends \yii\db\ActiveRecord
             'type' => 'Content Type',
         ];
     }
+    
+    /**
+     * @inherited
+     */
+    public function beforeDelete()
+    {
+        if(parent::beforeDelete()){
+            return unlink($this->filename);
+        }
+        return false;
+    }
 }

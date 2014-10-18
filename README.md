@@ -67,7 +67,24 @@ public function behaviors()
 }
 ```
 
-You dont need add extra attribute `file` to model class. In view file
+You dont need add extra attribute `file` to model class. In controller
+
+```php
+public function actionCreate()
+{
+    ...
+    if($model->load(Yii::$app->request->post() && $model->validate()){
+        if($model->saveUploadedFile() !== false){
+            $model->save();
+            ....
+        }
+        ...
+    }
+    
+}
+```
+
+In view file
 
 ```php
 // in create or update view

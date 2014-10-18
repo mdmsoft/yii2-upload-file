@@ -76,17 +76,6 @@ class UploadBehavior extends \yii\base\Behavior
     /**
      * @inheritdoc
      */
-    public function events()
-    {
-        return[
-            ActiveRecord::EVENT_BEFORE_INSERT => 'beforeSave',
-            ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeSave'
-        ];
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function __get($name)
     {
         if ($name === $this->attribute) {
@@ -130,10 +119,11 @@ class UploadBehavior extends \yii\base\Behavior
     }
 
     /**
-     * Handler event
-     * @param \yii\base\ModelEvent $event
+     * Save uploaded file into [[$uploadPath]]
+     * @return boolean|null if success return true, fault return false.
+     * Return null mean no uploaded file.
      */
-    public function beforeSave($event)
+    public function saveUploadedFile()
     {
         /* @var $file UploadedFile */
         $file = $this->{$this->attribute};
@@ -153,14 +143,10 @@ class UploadBehavior extends \yii\base\Behavior
                     if ($this->savedAttribute !== null) {
                         $this->owner->{$this->savedAttribute} = $model->id;
                     }
-                } else {
-                    $event->isValid = false;
-                    $this->owner->addError($this->attribute);
+                    return true;
                 }
-            } else {
-                $event->isValid = false;
-                $this->owner->addError($this->attribute, 'Cannot save uploaded file');
             }
+            return false;
         }
     }
 
