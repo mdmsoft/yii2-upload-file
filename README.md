@@ -60,7 +60,7 @@ public function behaviors()
 		[
 			'class' => 'mdm\upload\UploadBehavior',
 			'attribute' => 'file', // required, use to receive input file
-			'saveAttribute' => 'file_id', // optional, use to link model with saved file.
+			'savedAttribute' => 'file_id', // optional, use to link model with saved file.
 			'uploadPath' => '@common/upload', // saved directory. default to '@runtime/upload'
 		],
 	];

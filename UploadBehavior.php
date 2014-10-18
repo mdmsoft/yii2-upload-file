@@ -107,7 +107,7 @@ class UploadBehavior extends \yii\base\Behavior
      */
     public function canSetProperty($name, $checkVars = true)
     {
-        return $name === $this->attribute || parent::canSetProperty($name, $checkVars);
+        return $name === $this->attribute;
     }
 
     /**
@@ -115,7 +115,7 @@ class UploadBehavior extends \yii\base\Behavior
      */
     public function canGetProperty($name, $checkVars = true)
     {
-        return $name === $this->attribute || parent::canGetProperty($name, $checkVars);
+        return $name === $this->attribute;
     }
 
     /**
@@ -128,16 +128,16 @@ class UploadBehavior extends \yii\base\Behavior
         /* @var $file UploadedFile */
         $file = $this->{$this->attribute};
         if ($file !== null) {
-            $name = $file->baseName;
+            $name = $file->name;
             $fileName = $this->generateFilename($name);
             $size = $file->size;
             FileHelper::createDirectory(dirname($fileName));
             if ($file->saveAs($fileName, false)) {
                 $model = new FileModel([
-                    'basename' => $name,
+                    'name' => $name,
                     'filename' => $fileName,
-                    'filesize' => $size,
-                    'content_type' => $this->type? : FileHelper::getMimeType($fileName),
+                    'size' => $size,
+                    'type' => $this->type? : FileHelper::getMimeType($fileName),
                 ]);
                 if ($model->save()) {
                     if ($this->savedAttribute !== null) {
