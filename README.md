@@ -73,7 +73,7 @@ You dont need add extra attribute `file` to model class. In controller
 public function actionCreate()
 {
     ...
-    if($model->load(Yii::$app->request->post() && $model->validate()){
+    if($model->load(Yii::$app->request->post()) && $model->validate()){
         if($model->saveUploadedFile() !== false){
             $model->save();
             ....
