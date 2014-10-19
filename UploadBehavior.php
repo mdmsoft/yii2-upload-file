@@ -4,8 +4,6 @@ namespace mdm\upload;
 
 use Yii;
 use yii\web\UploadedFile;
-use yii\db\ActiveRecord;
-use yii\helpers\FileHelper;
 
 /**
  * UploadBehavior save uploaded file into [[$uploadPath]] and store information in database.
@@ -53,12 +51,6 @@ class UploadBehavior extends \yii\base\Behavior
      * is not over burdened with a single directory having too many files.
      */
     public $directoryLevel = 1;
-
-    /**
-     * @var string the MIME-type of the uploaded file (such as "image/gif").
-     * If type is not set, it will use [[\yii\helpers\FileHelper::getMimeType()]] to determine the exact MIME type.
-     */
-    public $type;
 
     /**
      * @var UploadedFile 
@@ -128,43 +120,14 @@ class UploadBehavior extends \yii\base\Behavior
         /* @var $file UploadedFile */
         $file = $this->{$this->attribute};
         if ($file !== null) {
-            $name = $file->name;
-            $fileName = $this->generateFilename($name);
-            $size = $file->size;
-            FileHelper::createDirectory(dirname($fileName));
-            if ($file->saveAs($fileName, false)) {
-                $model = new FileModel([
-                    'name' => $name,
-                    'filename' => $fileName,
-                    'size' => $size,
-                    'type' => $this->type? : FileHelper::getMimeType($fileName),
-                ]);
-                if ($model->save()) {
-                    if ($this->savedAttribute !== null) {
-                        $this->owner->{$this->savedAttribute} = $model->id;
-                    }
-                    return true;
+            $model = FileModel::saveAs($file, $this->uploadPath, $this->directoryLevel);
+            if ($model) {
+                if ($this->savedAttribute !== null) {
+                    $this->owner->{$this->savedAttribute} = $model->id;
                 }
+                return true;
             }
             return false;
         }
-    }
-
-    /**
-     * Generate filename
-     * @return string Filename
-     */
-    protected function generateFilename($name)
-    {
-        $key = md5(time() . $name);
-        $base = $this->uploadPath;
-        if ($this->directoryLevel > 0) {
-            for ($i = 0; $i < $this->directoryLevel; ++$i) {
-                if (($prefix = substr($key, $i + $i, 2)) !== false) {
-                    $base .= DIRECTORY_SEPARATOR . $prefix;
-                }
-            }
-        }
-        return $base . DIRECTORY_SEPARATOR . "{$key}_{$name}";
     }
 }
