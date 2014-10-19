@@ -17,7 +17,7 @@ class FileController extends \yii\web\Controller
 
     /**
      * Show file
-     * @param type $id
+     * @param integer $id
      */
     public function actionShow($id)
     {
@@ -29,15 +29,16 @@ class FileController extends \yii\web\Controller
     }
 
     /**
-     * Show file
-     * @param type $id
+     * Download file
+     * @param integer $id
+     * @param mixed $inline
      */
-    public function actionDownload($id)
+    public function actionDownload($id, $inline = null)
     {
         $model = $this->findModel($id);
         $response = Yii::$app->getResponse();
         $response->format = \yii\web\Response::FORMAT_RAW;
-        $response->setDownloadHeaders($model->name, $model->type, false, $model->size);
+        $response->setDownloadHeaders($model->name, $model->type, !empty($inline), $model->size);
         return file_get_contents($model->filename);
     }
 

@@ -30,7 +30,8 @@ class FileModel extends \yii\db\ActiveRecord
     {
         return [
             [['size'], 'integer'],
-            [['name', 'type'], 'string', 'max' => 64],
+            [['name'], 'string', 'max' => 64],
+            [['type'], 'string', 'max' => 32],
             [['filename'], 'string', 'max' => 256]
         ];
     }

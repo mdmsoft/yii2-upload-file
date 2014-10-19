@@ -26,7 +26,7 @@ class m141018_105939_create_table_upload extends Migration
             'name' => Schema::TYPE_STRING . '(64)',
             'filename' => Schema::TYPE_STRING . '(256)',
             'size' => Schema::TYPE_INTEGER,
-            'type' => Schema::TYPE_STRING . '(64)',
+            'type' => Schema::TYPE_STRING . '(32)',
             ], $tableOptions);
     }
 
