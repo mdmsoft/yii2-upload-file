@@ -138,3 +138,5 @@ class MyModel extend ...
     public $file; // add this to your model class
 
 ```
+
+- See [my blog](http://mdmunir.wordpress.com/2014/10/19/yii2-simple-way-to-upload-and-save-file/)
