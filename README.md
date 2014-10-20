@@ -108,3 +108,33 @@ In view file
 <?= Html::img(['/file','id'=>$model->file_id]) ?>
 <!-- assume the uploaded file is image ->
 ```
+
+Using Without Attach Behavior
+-----------------------------
+Instead of using as behavior, you can also directly save file using `FileModel`.
+
+```php
+public function actionCreate()
+{
+    ...
+    if($model->load(Yii::$app->request->post()) && $model->validate()){
+        $file = UploadedFile::getInstance($model,'file');
+        if($fileModel = FileModel::saveAs($file,'@common/upload')){
+            $model->fil_id = $fileModel->id;
+            $model->save();
+            ....
+        }
+        ...
+    }
+    
+}
+```
+
+But, you need to add attribute `file` to Model.
+
+```php
+class MyModel extend ...
+{
+    public $file; // add this to your model class
+
+```
