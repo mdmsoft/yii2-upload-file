@@ -6,7 +6,16 @@ use Yii;
 use yii\web\NotFoundHttpException;
 
 /**
- * FileController
+ * Use to show or download uploaded file. Add configuration to your application
+ * 
+ * ~~~
+ * 'controllerMap' => [
+ *     'file' => 'mdm\upload\FileController',
+ * ],
+ * ~~~
+ * 
+ * Then you can show your file in url `Url::to(['/file','id'=>$file_id])`,
+ * and download file in url `Url::to(['/file/download','id'=>$file_id])`
  *
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
