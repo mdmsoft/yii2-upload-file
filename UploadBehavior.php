@@ -112,10 +112,11 @@ class UploadBehavior extends \yii\base\Behavior
 
     /**
      * Save uploaded file into [[$uploadPath]]
+     * @param boolean $deleteOldFile If true and file exists, file will be deleted.
      * @return boolean|null if success return true, fault return false.
      * Return null mean no uploaded file.
      */
-    public function saveUploadedFile()
+    public function saveUploadedFile($deleteOldFile = false)
     {
         /* @var $file UploadedFile */
         $file = $this->{$this->attribute};
@@ -123,7 +124,11 @@ class UploadBehavior extends \yii\base\Behavior
             $model = FileModel::saveAs($file, $this->uploadPath, $this->directoryLevel);
             if ($model) {
                 if ($this->savedAttribute !== null) {
+                    $oldId = $this->owner->{$this->savedAttribute};
                     $this->owner->{$this->savedAttribute} = $model->id;
+                    if ($deleteOldFile && ($oldModel = FileModel::findOne($oldId)) !== null) {
+                        $oldModel->delete();
+                    }
                 }
                 return true;
             }
