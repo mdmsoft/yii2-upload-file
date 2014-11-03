@@ -75,6 +75,8 @@ public function behaviors()
 			'attribute' => 'file', // required, use to receive input file
 			'savedAttribute' => 'file_id', // optional, use to link model with saved file.
 			'uploadPath' => '@common/upload', // saved directory. default to '@runtime/upload'
+            'autoSave' => true, // when true then uploaded file will be save before ActiveRecord::save()
+            'autoDelete' => true, // when true then uploaded file will deleted before ActiveRecord::delete()
 		],
 	];
 }
@@ -88,9 +90,15 @@ public function actionCreate()
     ...
     if($model->load(Yii::$app->request->post()) && $model->validate()){
         if($model->saveUploadedFile() !== false){
-            $model->save();
+            $model->save(false);
             ....
         }
+        ...
+    }
+
+    // if you set UploadBehavior::$autoSave to true yo can directly use
+    // you dont need to call saveUploadedFile() manually
+    if($model->load(Yii::$app->request->post()) && $model->save()){
         ...
     }
     
