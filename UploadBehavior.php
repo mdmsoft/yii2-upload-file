@@ -4,6 +4,7 @@ namespace mdm\upload;
 
 use Yii;
 use yii\web\UploadedFile;
+use yii\db\BaseActiveRecord;
 
 /**
  * UploadBehavior save uploaded file into [[$uploadPath]] and store information in database.
@@ -53,6 +54,21 @@ class UploadBehavior extends \yii\base\Behavior
     public $directoryLevel = 1;
 
     /**
+     * @var boolean when true `saveUploadedFile()` will be called on event 'beforeSave'
+     */
+    public $autoSave = false;
+
+    /**
+     * @var boolean when true then related file will be deleted on event 'beforeDelete'
+     */
+    public $autoDelete = false;
+
+    /**
+     * @var boolean 
+     */
+    public $deleteOldFile = false;
+
+    /**
      * @var UploadedFile 
      */
     private $_file;
@@ -63,6 +79,21 @@ class UploadBehavior extends \yii\base\Behavior
     public function init()
     {
         $this->uploadPath = Yii::getAlias($this->uploadPath);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function events()
+    {
+        $event = [];
+        if ($this->autoSave) {
+            $event[BaseActiveRecord::EVENT_BEFORE_INSERT] = 'beforeSave';
+            $event[BaseActiveRecord::EVENT_BEFORE_UPDATE] = 'beforeSave';
+        }
+        if ($this->autoDelete && $this->savedAttribute !== null) {
+            $event[BaseActiveRecord::EVENT_BEFORE_DELETE] = 'beforeDelete';
+        }
     }
 
     /**
@@ -116,7 +147,7 @@ class UploadBehavior extends \yii\base\Behavior
      * @return boolean|null if success return true, fault return false.
      * Return null mean no uploaded file.
      */
-    public function saveUploadedFile($deleteOldFile = false)
+    public function saveUploadedFile($deleteOldFile = null)
     {
         /* @var $file UploadedFile */
         $file = $this->{$this->attribute};
@@ -124,6 +155,9 @@ class UploadBehavior extends \yii\base\Behavior
             $model = FileModel::saveAs($file, $this->uploadPath, $this->directoryLevel);
             if ($model) {
                 if ($this->savedAttribute !== null) {
+                    if ($deleteOldFile === null) {
+                        $deleteOldFile = $this->deleteOldFile;
+                    }
                     $oldId = $this->owner->{$this->savedAttribute};
                     $this->owner->{$this->savedAttribute} = $model->id;
                     if ($deleteOldFile && ($oldModel = FileModel::findOne($oldId)) !== null) {
@@ -133,6 +167,29 @@ class UploadBehavior extends \yii\base\Behavior
                 return true;
             }
             return false;
+        }
+    }
+
+    /**
+     * Event handler for beforeSave
+     * @param \yii\base\ModelEvent $event
+     */
+    public function beforeSave($event)
+    {
+        if ($this->saveUploadedFile() === false) {
+            $event->isValid = false;
+        }
+    }
+
+    /**
+     * Event handler for beforeDelete
+     * @param \yii\base\ModelEvent $event
+     */
+    public function beforeDelete($event)
+    {
+        $oldId = $this->owner->{$this->savedAttribute};
+        if (($oldModel = FileModel::findOne($oldId)) !== null) {
+            $event->isValid = $event->isValid && $oldModel->delete();
         }
     }
 }
