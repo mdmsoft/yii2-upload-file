@@ -118,7 +118,7 @@ class UploadBehavior extends \yii\base\Behavior
     public function __set($name, $value)
     {
         if ($name === $this->attribute) {
-            if ($value instanceof UploadedFile) {
+            if ($value instanceof UploadedFile || $value === null) {
                 $this->_file = $value;
             }
         } else {
@@ -162,7 +162,7 @@ class UploadBehavior extends \yii\base\Behavior
                     $oldId = $this->owner->{$this->savedAttribute};
                     $this->owner->{$this->savedAttribute} = $model->id;
                     if ($deleteOldFile && ($oldModel = FileModel::findOne($oldId)) !== null) {
-                        $oldModel->delete();
+                        return $oldModel->delete();
                     }
                 }
                 return true;
