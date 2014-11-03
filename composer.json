@@ -1,27 +1,27 @@
 {
-	"name": "mdmsoft/yii2-upload-file",
-	"description": "Yii2 upload file tools",
-	"keywords": ["yii", "upload", "file"],
-	"type": "yii2-extension",
-	"license": "BSD-3-Clause",
-	"support": {
-		"issues": "https://github.com/mdmsoft/yii2-upload-file/issues",
-		"source": "https://github.com/mdmsoft/yii2-upload-file"
-	},
-	"authors": [
-		{
-			"name": "Misbahul Munir",
-			"email": "misbahuldmunir@gmail.com"
-		}
-	],
-	"require": {
-		"yiisoft/yii2": "~2.o"
-	},
-	"autoload": {
-		"psr-4": {
-			"mdm\\upload\\": ""
-		}
-	},
+    "name": "mdmsoft/yii2-upload-file",
+    "description": "Yii2 upload file tools",
+    "keywords": ["yii", "upload", "file"],
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/mdmsoft/yii2-upload-file/issues",
+        "source": "https://github.com/mdmsoft/yii2-upload-file"
+    },
+    "authors": [
+        {
+            "name": "Misbahul Munir",
+            "email": "misbahuldmunir@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "mdm\\upload\\": ""
+        }
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
