@@ -94,6 +94,7 @@ class UploadBehavior extends \yii\base\Behavior
         if ($this->autoDelete && $this->savedAttribute !== null) {
             $event[BaseActiveRecord::EVENT_BEFORE_DELETE] = 'beforeDelete';
         }
+        return $event;
     }
 
     /**
