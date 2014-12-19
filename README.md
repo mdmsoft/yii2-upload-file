@@ -11,19 +11,19 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require mdmsoft/yii2-upload-file "*"
+php composer.phar require mdmsoft/yii2-upload-file "~1.1"
 ```
 
 for dev-master
 
 ```
-php composer.phar require mdmsoft/yii2-upload-file "dev-master"
+php composer.phar require mdmsoft/yii2-upload-file "~1.1"
 ```
 
 or add
 
 ```
-"mdmsoft/yii2-upload-file": "*"
+"mdmsoft/yii2-upload-file": "~1.1"
 ```
 
 to the require section of your `composer.json` file.
@@ -87,7 +87,18 @@ You dont need add extra attribute `file` to model class. In controller
 ```php
 public function actionCreate()
 {
+    if($model->load(Yii::$app->request->post()) && $model->save()){
+        ...
+    }
     ...
+}
+```
+
+If you set `mdm\upload\UploadBehavior::$autoSave` to `false` you must call `saveUploadedFile()`.
+
+```php
+public function actionCreate()
+{
     if($model->load(Yii::$app->request->post()) && $model->validate()){
         if($model->saveUploadedFile() !== false){
             $model->save(false);
@@ -95,13 +106,7 @@ public function actionCreate()
         }
         ...
     }
-
-    // if you set UploadBehavior::$autoSave to true yo can directly use
-    // you dont need to call saveUploadedFile() manually
-    if($model->load(Yii::$app->request->post()) && $model->save()){
-        ...
-    }
-    
+    ...
 }
 ```
 
