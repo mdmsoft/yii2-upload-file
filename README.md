@@ -17,7 +17,7 @@ php composer.phar require mdmsoft/yii2-upload-file "~1.1"
 for dev-master
 
 ```
-php composer.phar require mdmsoft/yii2-upload-file "~1.1"
+php composer.phar require mdmsoft/yii2-upload-file "dev-master"
 ```
 
 or add
