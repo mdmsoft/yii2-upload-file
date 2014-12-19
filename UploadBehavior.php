@@ -56,7 +56,7 @@ class UploadBehavior extends \yii\base\Behavior
     /**
      * @var boolean when true `saveUploadedFile()` will be called on event 'beforeSave'
      */
-    public $autoSave = false;
+    public $autoSave = true;
 
     /**
      * @var boolean when true then related file will be deleted on event 'beforeDelete'
