@@ -43,11 +43,11 @@ if wantn't use db migration. you can create required table manually.
 
 ```sql
 CREATE TABLE uploaded_file (
-    "id" INT NOT NULL AUTO_INCREMENT,
-    "name" VARCHAR(64),
-    "filename" VARCHAR(256),
-    "size" INT,
-    "type" VARCHAR(32),
+    `id` INT NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(64),
+    `filename` VARCHAR(256),
+    `size` INT,
+    `type` VARCHAR(32),
     PRIMARY KEY (id)
 );
 ```
