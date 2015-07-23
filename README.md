@@ -11,7 +11,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require mdmsoft/yii2-upload-file "~1.1"
+php composer.phar require mdmsoft/yii2-upload-file "~1.2"
 ```
 
 for dev-master
@@ -23,7 +23,7 @@ php composer.phar require mdmsoft/yii2-upload-file "dev-master"
 or add
 
 ```
-"mdmsoft/yii2-upload-file": "~1.1"
+"mdmsoft/yii2-upload-file": "~1.2"
 ```
 
 to the require section of your `composer.json` file.

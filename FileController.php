@@ -32,9 +32,11 @@ class FileController extends \yii\web\Controller
     {
         $model = $this->findModel($id);
         $response = Yii::$app->getResponse();
-        $response->format = \yii\web\Response::FORMAT_RAW;
-        $response->getHeaders()->add('content-type', $model->type);
-        return file_get_contents($model->filename);
+        return $response->sendFile($model->filename, $model->name, [
+                'mimeType' => $model->type,
+                'fileSize' => $model->size,
+                'inline' => true
+        ]);
     }
 
     /**
@@ -42,13 +44,15 @@ class FileController extends \yii\web\Controller
      * @param integer $id
      * @param mixed $inline
      */
-    public function actionDownload($id, $inline = null)
+    public function actionDownload($id, $inline = false)
     {
         $model = $this->findModel($id);
         $response = Yii::$app->getResponse();
-        $response->format = \yii\web\Response::FORMAT_RAW;
-        $response->setDownloadHeaders($model->name, $model->type, !empty($inline), $model->size);
-        return file_get_contents($model->filename);
+        return $response->sendFile($model->filename, $model->name, [
+                'mimeType' => $model->type,
+                'fileSize' => $model->size,
+                'inline' => $inline
+        ]);
     }
 
     /**
