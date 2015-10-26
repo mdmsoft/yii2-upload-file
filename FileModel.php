@@ -40,7 +40,7 @@ class FileModel extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'uploaded_file';
+        return '{{%uploaded_file}}';
     }
 
     /**
