@@ -73,8 +73,8 @@ class FileModel extends \yii\db\ActiveRecord
                 return $base . DIRECTORY_SEPARATOR . "{$key}_{$this->file->name}";
             }],
             [['size'], 'integer'],
-            [['name'], 'string', 'max' => 64],
-            [['type'], 'string', 'max' => 32],
+            [['name'], 'string', 'max' => 256],
+            [['type'], 'string', 'max' => 64],
             [['filename'], 'string', 'max' => 256]
         ];
     }
@@ -130,5 +130,10 @@ class FileModel extends \yii\db\ActiveRecord
             'directoryLevel' => $directoryLevel,
         ]);
         return $model->save() ? $model : false;
+    }
+
+    public function getContent()
+    {
+        return file_get_contents($this->filename);
     }
 }

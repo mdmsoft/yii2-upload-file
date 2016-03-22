@@ -24,6 +24,8 @@ use yii\db\BaseActiveRecord;
  * ~~~
  * 
  * @property \yii\base\Model $owner
+ * @property FileModel $savedFile
+ * 
  * @author Misbahul D Munir <misbahuldmunir@gmail.com>
  * @since 1.0
  */
@@ -98,6 +100,16 @@ class UploadBehavior extends \yii\base\Behavior
     }
 
     /**
+     * Get saved file
+     * @return FileModel
+     */
+    public function getSavedFile()
+    {
+        if($this->savedAttribute && $this->owner->{$this->savedAttribute}){
+            return FileModel::findOne($this->owner->{$this->savedAttribute});
+        }
+    }
+    /**
      * @inheritdoc
      */
     public function __get($name)
@@ -131,7 +143,7 @@ class UploadBehavior extends \yii\base\Behavior
      */
     public function canSetProperty($name, $checkVars = true)
     {
-        return $name === $this->attribute;
+        return $name === $this->attribute || parent::canSetProperty($name, $checkVars);
     }
 
     /**
@@ -139,7 +151,7 @@ class UploadBehavior extends \yii\base\Behavior
      */
     public function canGetProperty($name, $checkVars = true)
     {
-        return $name === $this->attribute;
+        return $name === $this->attribute || parent::canGetProperty($name, $checkVars);
     }
 
     /**

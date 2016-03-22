@@ -1,6 +1,5 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 /**
@@ -22,11 +21,11 @@ class m141018_105939_create_table_upload extends Migration
         }
 
         $this->createTable('{{%uploaded_file}}', [
-            'id' => Schema::TYPE_PK,
-            'name' => Schema::TYPE_STRING . '(64)',
-            'filename' => Schema::TYPE_STRING . '(256)',
-            'size' => Schema::TYPE_INTEGER,
-            'type' => Schema::TYPE_STRING . '(32)',
+            'id' => $this->primaryKey(),
+            'name' => $this->string(),
+            'filename' => $this->string(),
+            'size' => $this->integer(),
+            'type' => $this->string(64),
             ], $tableOptions);
     }
 
