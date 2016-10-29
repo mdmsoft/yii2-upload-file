@@ -11,7 +11,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require mdmsoft/yii2-upload-file "~1.2"
+php composer.phar require mdmsoft/yii2-upload-file "~2.0"
 ```
 
 for dev-master
@@ -23,7 +23,7 @@ php composer.phar require mdmsoft/yii2-upload-file "dev-master"
 or add
 
 ```
-"mdmsoft/yii2-upload-file": "~1.2"
+"mdmsoft/yii2-upload-file": "~2.0"
 ```
 
 to the require section of your `composer.json` file.
@@ -131,8 +131,8 @@ public function actionCreate()
 {
     ...
     if($model->load(Yii::$app->request->post()) && $model->validate()){
-        $file = UploadedFile::getInstance($model,'file');
-        if($fileModel = FileModel::saveAs($file,'@common/upload')){
+        $file = UploadedFile::getInstance($model, 'file');
+        if($fileModel = FileModel::saveAs($file,['uploadPath' => '@common/upload'])){
             $model->fil_id = $fileModel->id;
             $model->save();
             ....

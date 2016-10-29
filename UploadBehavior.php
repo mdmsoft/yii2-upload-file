@@ -71,6 +71,11 @@ class UploadBehavior extends \yii\base\Behavior
     public $deleteOldFile = false;
 
     /**
+     * @var \Closure|string
+     */
+    public $saveCallback;
+
+    /**
      * @var UploadedFile 
      */
     private $_file;
@@ -165,7 +170,15 @@ class UploadBehavior extends \yii\base\Behavior
         /* @var $file UploadedFile */
         $file = $this->{$this->attribute};
         if ($file !== null) {
-            $model = FileModel::saveAs($file, $this->uploadPath, $this->directoryLevel);
+            $callback = $this->saveCallback;
+            if ($callback !== null && is_string($callback)) {
+                $callback = [$this->owner, $callback];
+            }
+            $model = FileModel::saveAs($file, [
+                'uploadPath' => $this->uploadPath,
+                'directoryLevel' => $this->directoryLevel,
+                'saveCallback' => $callback,
+            ]);
             if ($model) {
                 if ($this->savedAttribute !== null) {
                     if ($deleteOldFile === null) {

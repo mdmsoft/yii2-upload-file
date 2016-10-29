@@ -36,6 +36,11 @@ class FileModel extends \yii\db\ActiveRecord
     public $directoryLevel = 1;
 
     /**
+     * @var \Closure
+     */
+    public $saveCallback;
+
+    /**
      * @inheritdoc
      */
     public static function tableName()
@@ -100,7 +105,11 @@ class FileModel extends \yii\db\ActiveRecord
     {
         if ($this->file && $this->file instanceof UploadedFile && parent::beforeSave($insert)) {
             FileHelper::createDirectory(dirname($this->filename));
-            return $this->file->saveAs($this->filename, false);
+            if ($this->saveCallback === null) {
+                return $this->file->saveAs($this->filename, false);
+            } else {
+                return call_user_func($this->saveCallback, $this);
+            }
         }
         return false;
     }
@@ -118,17 +127,17 @@ class FileModel extends \yii\db\ActiveRecord
 
     /**
      * Save file
-     * @param UploadedFile $file
-     * @param string $path
+     * @param UploadedFile|string $file
+     * @param array $options
      * @return boolean|static
      */
-    public static function saveAs($file, $path = '@runtime/upload', $directoryLevel = 1)
+    public static function saveAs($file, $options = [])
     {
-        $model = new static([
-            'file' => $file,
-            'uploadPath' => $path,
-            'directoryLevel' => $directoryLevel,
-        ]);
+        if (!($file instanceof UploadedFile)) {
+            $file = UploadedFile::getInstanceByName($file);
+        }
+        $options['file'] = $file;
+        $model = new static($options);
         return $model->save() ? $model : false;
     }
 
