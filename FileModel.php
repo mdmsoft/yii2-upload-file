@@ -18,6 +18,14 @@ use yii\helpers\FileHelper;
 class FileModel extends \yii\db\ActiveRecord
 {
     /**
+     * @var string 
+     */
+    public static $defaultUploadPath = '@runtime/upload';
+    /**
+     * @var integer
+     */
+    public static $defaultDirectoryLevel = 1;
+    /**
      * @var UploadedFile 
      */
     public $file;
@@ -25,7 +33,7 @@ class FileModel extends \yii\db\ActiveRecord
     /**
      * @var string Upload path
      */
-    public $uploadPath = '@runtime/upload';
+    public $uploadPath;
 
     /**
      * @var integer the level of sub-directories to store uploaded files. Defaults to 1.
@@ -33,7 +41,7 @@ class FileModel extends \yii\db\ActiveRecord
      * (usually no bigger than 3). Using sub-directories is mainly to ensure the file system
      * is not over burdened with a single directory having too many files.
      */
-    public $directoryLevel = 1;
+    public $directoryLevel;
 
     /**
      * @var \Closure
@@ -56,9 +64,7 @@ class FileModel extends \yii\db\ActiveRecord
         return [
             [['file'], 'required'],
             [['file'], 'file', 'skipOnEmpty' => false],
-            [['uploadPath'], 'required', 'when' => function($obj) {
-                return empty($obj->filename);
-            }],
+            [['uploadPath'], 'default', 'value' => static::$defaultUploadPath],
             [['name', 'size'], 'default', 'value' => function($obj, $attribute) {
                 return $obj->file->$attribute;
             }],
@@ -66,12 +72,14 @@ class FileModel extends \yii\db\ActiveRecord
                 return FileHelper::getMimeType($this->file->tempName);
             }],
             [['filename'], 'default', 'value' => function() {
+                $level = $this->directoryLevel === null ? static::$defaultDirectoryLevel : $this->directoryLevel;
                 $key = md5(microtime() . $this->file->name);
                 $base = Yii::getAlias($this->uploadPath);
-                if ($this->directoryLevel > 0) {
-                    for ($i = 0; $i < $this->directoryLevel; ++$i) {
-                        if (($prefix = substr($key, $i + $i, 2)) !== false) {
+                if ($level > 0) {
+                    for ($i = 0; $i < $level; ++$i) {
+                        if (($prefix = substr($key, 0, 2)) !== false) {
                             $base .= DIRECTORY_SEPARATOR . $prefix;
+                            $key = substr($key, 2);
                         }
                     }
                 }
