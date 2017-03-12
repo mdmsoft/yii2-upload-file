@@ -5,6 +5,7 @@ namespace mdm\upload;
 use Yii;
 use yii\web\UploadedFile;
 use yii\helpers\FileHelper;
+use yii\imagine\Image;
 
 /**
  * This is the model class for table "uploaded_file".
@@ -29,12 +30,10 @@ class FileModel extends \yii\db\ActiveRecord
      * @var UploadedFile 
      */
     public $file;
-
     /**
      * @var string Upload path
      */
     public $uploadPath;
-
     /**
      * @var integer the level of sub-directories to store uploaded files. Defaults to 1.
      * If the system has huge number of uploaded files (e.g. one million), you may use a bigger value
@@ -42,11 +41,12 @@ class FileModel extends \yii\db\ActiveRecord
      * is not over burdened with a single directory having too many files.
      */
     public $directoryLevel;
-
     /**
      * @var \Closure
      */
     public $saveCallback;
+    public $cropParam;
+    public $resizeParam;
 
     /**
      * @inheritdoc
@@ -66,25 +66,25 @@ class FileModel extends \yii\db\ActiveRecord
             [['file'], 'file', 'skipOnEmpty' => false],
             [['uploadPath'], 'default', 'value' => static::$defaultUploadPath],
             [['name', 'size'], 'default', 'value' => function($obj, $attribute) {
-                return $obj->file->$attribute;
-            }],
+                    return $obj->file->$attribute;
+                }],
             [['type'], 'default', 'value' => function() {
-                return FileHelper::getMimeType($this->file->tempName);
-            }],
+                    return FileHelper::getMimeType($this->file->tempName);
+                }],
             [['filename'], 'default', 'value' => function() {
-                $level = $this->directoryLevel === null ? static::$defaultDirectoryLevel : $this->directoryLevel;
-                $key = md5(microtime() . $this->file->name);
-                $base = Yii::getAlias($this->uploadPath);
-                if ($level > 0) {
-                    for ($i = 0; $i < $level; ++$i) {
-                        if (($prefix = substr($key, 0, 2)) !== false) {
-                            $base .= DIRECTORY_SEPARATOR . $prefix;
-                            $key = substr($key, 2);
+                    $level = $this->directoryLevel === null ? static::$defaultDirectoryLevel : $this->directoryLevel;
+                    $key = md5(microtime() . $this->file->name);
+                    $base = Yii::getAlias($this->uploadPath);
+                    if ($level > 0) {
+                        for ($i = 0; $i < $level; ++$i) {
+                            if (($prefix = substr($key, 0, 2)) !== false) {
+                                $base .= DIRECTORY_SEPARATOR . $prefix;
+                                $key = substr($key, 2);
+                            }
                         }
                     }
-                }
-                return $base . DIRECTORY_SEPARATOR . "{$key}_{$this->file->name}";
-            }],
+                    return $base . DIRECTORY_SEPARATOR . "{$key}_{$this->file->name}";
+                }],
             [['size'], 'integer'],
             [['name'], 'string', 'max' => 256],
             [['type'], 'string', 'max' => 64],
@@ -113,13 +113,33 @@ class FileModel extends \yii\db\ActiveRecord
     {
         if ($this->file && $this->file instanceof UploadedFile && parent::beforeSave($insert)) {
             FileHelper::createDirectory(dirname($this->filename));
-            if ($this->saveCallback === null) {
-                return $this->file->saveAs($this->filename, false);
-            } else {
+            if ($this->saveCallback !== null) {
                 return call_user_func($this->saveCallback, $this);
+            } elseif ($this->cropParam && ($crop = Yii::$app->getRequest()->post($this->cropParam))) {
+                return $this->cropImage($crop);
+            } elseif ($this->resizeParam && ($resize = Yii::$app->getRequest()->post($this->resizeParam))) {
+                return $this->resizeImage($resize);
+            } else {
+                return $this->file->saveAs($this->filename, false);
             }
         }
         return false;
+    }
+
+    protected function cropImage($crop)
+    {
+        $image = Image::crop($this->file->tempName, $crop['w'], $crop['h'], [$crop['x'], $crop['y']]);
+        $image->save($this->filename);
+        $this->size = filesize($this->filename);
+        return true;
+    }
+
+    protected function resizeImage($resize)
+    {
+        $image = Image::thumbnail($this->file->tempName, $resize['width'], $resize['height']);
+        $image->save($this->filename);
+        $this->size = filesize($this->filename);
+        return true;
     }
 
     /**
@@ -128,7 +148,8 @@ class FileModel extends \yii\db\ActiveRecord
     public function beforeDelete()
     {
         if (parent::beforeDelete()) {
-            return unlink($this->filename);
+            @unlink($this->filename);
+            return true;
         }
         return false;
     }
