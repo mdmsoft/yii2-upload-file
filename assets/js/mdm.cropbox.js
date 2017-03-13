@@ -25,6 +25,9 @@
             var reader = new FileReader();
             reader.onload = function (e) {
                 $el.trigger('beforeLoadFile');
+                if (opts.beforeLoadFile) {
+                    opts.beforeLoadFile.call($el);
+                }
                 $el.find('input[data-attr="x"]').val('');
                 var $img = $('#' + imgId);
                 $img.attr('src', e.target.result);
@@ -59,6 +62,9 @@
                         opts.api.setSelect(selection);
                     }
                     $el.trigger('afterLoadFile');
+                    if (opts.afterLoadFile) {
+                        opts.afterLoadFile.call($el);
+                    }
                 }
                 img.src = e.target.result;
             }
@@ -96,6 +102,8 @@
     var defaults = {
         aspectRatio: 1,
         toSmallMsg: 'Image to small',
+        beforeLoadFile: undefined,
+        afterLoadFile: undefined,
     }
 
     $.fn.dCropBox = function (method) {

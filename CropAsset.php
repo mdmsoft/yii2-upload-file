@@ -13,7 +13,7 @@ class CropAsset extends \yii\web\AssetBundle
     public $sourcePath = '@mdm/upload/assets';
     public $js = [
         'http://jcrop-cdn.tapmodo.com/v0.9.12/js/jquery.Jcrop.min.js',
-        'js/dcropbox.js'
+        'js/mdm.cropbox.js'
     ];
     public $css = [
         'http://jcrop-cdn.tapmodo.com/v0.9.12/css/jquery.Jcrop.min.css'
