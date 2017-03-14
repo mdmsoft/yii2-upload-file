@@ -20,7 +20,7 @@
             if (opts.api) {
                 opts.api.destroy();
             }
-            $el.children('div.container').html(opts.imgTemplate);
+            $el.children('div.dcrop-container').html(opts.imgTemplate);
 
             var reader = new FileReader();
             reader.onload = function (e) {
@@ -89,12 +89,12 @@
                     });
                 }
                 $this.data('dCropBox', opts);
-                $this.children(':input.file-input').change(inputChange);
+                $this.children(':input.dcrop-file-input').change(inputChange);
             });
         },
         selectFile: function () {
             return this.each(function () {
-                $(this).children(':input.file-input').trigger('click');
+                $(this).children(':input.dcrop-file-input').trigger('click');
             });
         }
     }

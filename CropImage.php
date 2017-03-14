@@ -47,7 +47,7 @@ class CropImage extends \yii\widgets\InputWidget
         $id = $this->options['id'] = $this->getId();
 
         Html::addCssClass($this->options, 'dcorpbox');
-        Html::addCssClass($this->imgOptions, 'content');
+        Html::addCssClass($this->imgOptions, 'dcrop-content');
         CropAsset::register($this->getView());
 
         $clientOptions = $this->clientOptions;
@@ -56,14 +56,14 @@ class CropImage extends \yii\widgets\InputWidget
         $opts = Json::encode($clientOptions);
         $js = "jQuery('#{$id}').dCropBox($opts);";
         $this->getView()->registerJs($js);
-        $inputOptions = ['style' => 'visibility:hidden;', 'class' => 'file-input', 'id' => $id . '-file'];
+        $inputOptions = ['style' => 'visibility:hidden;', 'class' => 'dcrop-file-input', 'id' => $id . '-file'];
         if ($this->hasModel()) {
             $fileInput = Html::activeFileInput($this->model, $this->attribute, $inputOptions);
         } else {
             $fileInput = Html::fileInput($this->name, $this->value, $inputOptions);
         }
         $content = <<<HTML
-<div class="container"></div>
+<div class="dcrop-container"></div>
 <div style="display: none;">
     <input type="hidden" name="{$this->cropParam}[x]" data-attr="x">
     <input type="hidden" name="{$this->cropParam}[y]" data-attr="y">
