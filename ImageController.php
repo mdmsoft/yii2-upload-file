@@ -24,17 +24,17 @@ class ImageController extends \yii\web\Controller
      * Show file
      * @param integer $id
      */
-    public function actionShow($id, $width = null, $height = null, $ratio = null)
+    public function actionShow($id, $width = null, $height = null)
     {
         $model = $this->findModel($id);
         $response = Yii::$app->getResponse();
-        if ($width === null && $height === null && $ratio === null) {
+        if ($width === null && $height === null) {
             return $response->sendFile($model->filename, $model->name, [
                     'mimeType' => $model->type,
                     'fileSize' => $model->size,
                     'inline' => true
             ]);
-        } elseif ($width !== null || $height !== null) {
+        } else {
             $dir = '';
             if ($width !== null) {
                 $dir .= 'w' . (int) $width;
@@ -46,24 +46,6 @@ class ImageController extends \yii\web\Controller
             if (!file_exists($filename)) {
                 FileHelper::createDirectory(dirname($filename));
                 $image = Image::thumbnail($model->filename, $width, $height);
-                $image->save($filename);
-            }
-            return $response->sendFile($filename, $model->name, [
-                    'mimeType' => $model->type,
-                    'inline' => true
-            ]);
-        } else {
-            $ratio = round($ratio, 2);
-            list($w, $h) = getimagesize($model->filename);
-            if ($w > $ratio * $h) {
-                $w = $ratio * $h;
-            } else {
-                $h = $w / $ratio;
-            }
-            $filename = sprintf('%s/c%d/%x/%d_%s', Yii::getAlias($this->savePath), $ratio * 100, $id % 255, $id, $model->name);
-            if (!file_exists($filename)) {
-                FileHelper::createDirectory(dirname($filename));
-                $image = Image::crop($model->filename, $w, $h);
                 $image->save($filename);
             }
             return $response->sendFile($filename, $model->name, [

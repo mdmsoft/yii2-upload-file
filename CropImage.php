@@ -18,7 +18,6 @@ class CropImage extends \yii\widgets\InputWidget
      * @see \yii\helpers\Html::renderTagAttributes() for details on how attributes are being rendered.
      */
     public $imgOptions = [];
-
     /**
      *
      * @var array
@@ -46,7 +45,7 @@ class CropImage extends \yii\widgets\InputWidget
     {
         $id = $this->options['id'] = $this->getId();
 
-        Html::addCssClass($this->options, 'dcorpbox');
+        Html::addCssClass($this->options, 'dcropbox');
         Html::addCssClass($this->imgOptions, 'dcrop-content');
         CropAsset::register($this->getView());
 

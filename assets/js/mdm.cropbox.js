@@ -8,10 +8,10 @@
         $element.find('input[data-attr="w"]').val(c.w * factor);
         $element.find('input[data-attr="h"]').val(c.h * factor);
     }
-    
+
     function inputChange() {
         var input = this;
-        var $el = $(this).closest('div.dcorpbox');
+        var $el = $(this).closest('div.dcropbox');
         var id = $el.attr('id');
         var imgId = id + '-img';
         var opts = $el.data('dCropBox');
@@ -39,28 +39,32 @@
                         alert(opts.toSmallMsg);
                         return;
                     }
-                    var factor = img.width / $img.width();
-                    var params = {
-                        onSelect: updateCoords,
-                    };
-                    var selection;
-                    if (opts.minWidth || opts.minHeight) {
-                        var minW = opts.minWidth / factor;
-                        var minH = opts.minHeight / factor;
-                        selection = [0, 0, minW, minH];
-                        params = $.extend({}, params, {
-                            minSize: [minW, minH],
-                        });
+
+                    if (opts.cropParam != undefined) {
+                        var factor = img.width / $img.width();
+                        var params = {
+                            onSelect: updateCoords,
+                        };
+                        var selection;
+                        if (opts.minWidth || opts.minHeight) {
+                            var minW = opts.minWidth / factor;
+                            var minH = opts.minHeight / factor;
+                            selection = [0, 0, minW, minH];
+                            params = $.extend({}, params, {
+                                minSize: [minW, minH],
+                            });
+                        }
+                        opts.api = $.Jcrop('#' + imgId, $.extend({}, params, {
+                            aspectRatio: opts.aspectRatio,
+                        }, opts.jcrop || {}));
+                        opts.api.$el = $el;
+                        opts.api.zoomFactor = factor;
+
+                        if (selection) {
+                            opts.api.setSelect(selection);
+                        }
                     }
-                    opts.api = $.Jcrop('#' + imgId, $.extend({}, params, {
-                        aspectRatio: opts.aspectRatio,
-                    }, opts.jcrop || {}));
-                    opts.api.$el = $el;
-                    opts.api.zoomFactor = factor;
-                    
-                    if (selection){
-                        opts.api.setSelect(selection);
-                    }
+
                     $el.trigger('afterLoadFile');
                     if (opts.afterLoadFile) {
                         opts.afterLoadFile.call($el);
@@ -104,6 +108,7 @@
         toSmallMsg: 'Image to small',
         beforeLoadFile: undefined,
         afterLoadFile: undefined,
+        cropParam: undefined,
     }
 
     $.fn.dCropBox = function (method) {
