@@ -87,7 +87,7 @@ class FileModel extends \yii\db\ActiveRecord
                 }],
             [['size'], 'integer'],
             [['name'], 'string', 'max' => 256],
-            [['type'], 'string', 'max' => 64],
+            [['type'], 'string', 'max' => 256],
             [['filename'], 'string', 'max' => 256]
         ];
     }
