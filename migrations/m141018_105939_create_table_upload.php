@@ -25,7 +25,7 @@ class m141018_105939_create_table_upload extends Migration
             'name' => $this->string(),
             'filename' => $this->string(),
             'size' => $this->integer(),
-            'type' => $this->string(64),
+            'type' => $this->string(),
             ], $tableOptions);
     }
 
